@@ -13,8 +13,10 @@ module.exports = {
     if (!name) return handleError(res, 400, "Name is required");
     if (!email) return handleError(res, 400, "Email is required");
     if (!password) return handleError(res, 400, "Password is required");
-    if (password!==confirmPassword) return handleError(res, 400, "Conform Password Not Matched")
-    if (!confirmPassword) return handleError(res, 400, "Confirm Password is required");
+    if (password !== confirmPassword)
+      return handleError(res, 400, "Conform Password Not Matched");
+    if (!confirmPassword)
+      return handleError(res, 400, "Confirm Password is required");
     if (password.length < 6)
       return handleError(
         res,
@@ -58,10 +60,15 @@ module.exports = {
       const token = jwt.sign(
         { id: user._id, email: user.email, name: user.name },
         process.env.JWT_SECRET,
-        { expiresIn: "2h" } 
+        { expiresIn: "2h" }
       );
-
-      return handleSuccess(res, 200, "Login successful", { user, token });
+      const expiresIn = new Date();
+      expiresIn.setHours(expiresIn.getHours() + 2);
+      return handleSuccess(res, 200, "Login successful", {
+        user,
+        token,
+        expiresIn,
+      });
     } catch (error) {
       console.error("Error logging in user:", error);
       return handleInternalServerError(res);
