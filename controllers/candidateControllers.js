@@ -20,7 +20,7 @@ module.exports = {
 
     try {
       const cheekEmail = await Candidate.findOne({ email });
-      if (cheekEmail) return handleError(res, 409, "Email already exists");
+      if (cheekEmail) return handleError(res, 400, "Email already exists");
       const { secure_url } = await cloudinary.uploader.upload(resume.tempFilePath, {
         resource_type: "auto",
         public_id: "file" + Date.now(),
@@ -36,6 +36,15 @@ module.exports = {
       });
       if (!user) return handleError(res, 400, "Candidate registration failed");
       return handleSuccess(res, 200, "Candidate registered successfully", user);
+    } catch (error) {
+      console.error("Error registering Candidate:", error);
+      return handleInternalServerError(res);
+    }
+  },
+  GetAllCandidate: async (req, res) => {
+    try {
+      const CandidateList = await Candidate.find();
+      return handleSuccess(res, 200, "Candidate fetch successfully", CandidateList);
     } catch (error) {
       console.error("Error registering Candidate:", error);
       return handleInternalServerError(res);
