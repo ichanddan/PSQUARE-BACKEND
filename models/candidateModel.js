@@ -29,7 +29,7 @@ const candidateSchema = new mongoose.Schema(
       default: "Applied",
     },
     experience: {
-      type: Number,
+      type: String,
       required: true,
     },
     resume: {

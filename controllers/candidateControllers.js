@@ -1,3 +1,4 @@
+const cloudinary = require("../config/cloudinary");
 const Candidate = require("../models/candidateModel");
 const {
   handleError,
@@ -9,7 +10,7 @@ module.exports = {
   AddCandidate: async (req, res) => {
     const { name, email, number, position, experience, informationRight } =
       req.body;
-    const { resume } = req.file;
+    const { resume } = req.files;
     if (!name) return handleError(res, 400, "Name is required");
     if (!email) return handleError(res, 400, "Email is required");
     if (!number) return handleError(res, 400, "Number is required");
@@ -20,6 +21,10 @@ module.exports = {
     try {
       const cheekEmail = await Candidate.findOne({ email });
       if (cheekEmail) return handleError(res, 409, "Email already exists");
+      const { secure_url } = await cloudinary.uploader.upload(resume.tempFilePath, {
+        resource_type: "auto",
+        public_id: "file" + Date.now(),
+      });
       const user = await Candidate.create({
         name,
         email,
@@ -27,7 +32,7 @@ module.exports = {
         position,
         experience,
         informationRight,
-        resume: resume.path,
+        resume: secure_url,
       });
       if (!user) return handleError(res, 400, "Candidate registration failed");
       return handleSuccess(res, 200, "Candidate registered successfully", user);
