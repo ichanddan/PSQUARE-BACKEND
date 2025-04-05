@@ -9,10 +9,12 @@ const jwt = require("jsonwebtoken");
 
 module.exports = {
   register: async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, confirmPassword } = req.body;
     if (!name) return handleError(res, 400, "Name is required");
     if (!email) return handleError(res, 400, "Email is required");
     if (!password) return handleError(res, 400, "Password is required");
+    if (password!==confirmPassword) return handleError(res, 400, "Conform Password Not Matched")
+    if (!confirmPassword) return handleError(res, 400, "Confirm Password is required");
     if (password.length < 6)
       return handleError(
         res,
@@ -22,7 +24,7 @@ module.exports = {
 
     try {
       const cheekEmail = await User.findOne({ email });
-      if (cheekEmail) return handleError(res, 409, "Email already exists");
+      if (cheekEmail) return handleError(res, 400, "Email already exists");
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       const user = await User.create({ name, email, password: hashedPassword });
