@@ -1,3 +1,4 @@
+const cloudinary = require("../config/cloudinary");
 const employee = require("../models/employesModel");
 const {
   handleError,
@@ -7,12 +8,30 @@ const {
 
 module.exports = {
   Add: async (req, res) => {
+    const { profile } = req.files;
+    console.log(req.body, profile);
     try {
-      const cheekEmail = await employee.findOne({ email });
+      const cheekEmail = await employee.findOne({email:req.body.email});
       if (cheekEmail) return handleError(res, 400, "Email already exists");
-      const Employee = await employee.create(req.body);
-      if (!Employee) return handleError(res, 400, "Employee registration failed");
-      return handleSuccess(res, 200, "Employee registered successfully", Employee);
+      const { secure_url } = await cloudinary.uploader.upload(
+        profile.tempFilePath,
+        {
+          resource_type: "auto",
+          public_id: "file" + Date.now(),
+        }
+      );
+      const Employee = await employee.create({
+        profileUrl: secure_url,
+        ...req.body,
+      });
+      if (!Employee)
+        return handleError(res, 400, "Employee registration failed");
+      return handleSuccess(
+        res,
+        200,
+        "Employee registered successfully",
+        Employee
+      );
     } catch (error) {
       console.error("Error registering Employee:", error);
       return handleInternalServerError(res);
