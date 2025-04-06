@@ -45,9 +45,24 @@ module.exports = {
   },
   GetLeave: async (req, res) => {
     try {
-      const leave = await Leave.find().populate('employeeId', 'name profileUrl');
+      const leave = await Leave.find().populate(
+        "employeeId",
+        "name profileUrl"
+      );
 
       return handleSuccess(res, 200, "Leave added successfully", leave);
+    } catch (error) {
+      console.log(error);
+      return handleInternalServerError(res);
+    }
+  },
+  UpdateStatus: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const update = await Leave.findByIdAndUpdate(id, req.body);
+      if (update) {
+        return handleSuccess(res, 200, "Leave update successfully", update);
+      }
     } catch (error) {
       console.log(error);
       return handleInternalServerError(res);
