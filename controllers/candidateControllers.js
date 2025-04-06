@@ -50,4 +50,16 @@ module.exports = {
       return handleInternalServerError(res);
     }
   },
+  DeleteCandidate: async (req, res) => {
+    try {
+      const {id} = req.params;
+      const CandidateList = await Candidate.findByIdAndDelete(id);
+      if (CandidateList) {
+        return handleSuccess(res, 200, "Candidate Delete successfully", CandidateList);
+      }
+    } catch (error) {
+      console.error("Error registering Candidate:", error);
+      return handleInternalServerError(res);
+    }
+  },
 };
