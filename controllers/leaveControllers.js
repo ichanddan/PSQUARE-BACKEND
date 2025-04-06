@@ -43,4 +43,14 @@ module.exports = {
       return handleInternalServerError(res);
     }
   },
+  GetLeave: async (req, res) => {
+    try {
+      const leave = await Leave.find().populate('employeeId', 'name profileUrl');
+
+      return handleSuccess(res, 200, "Leave added successfully", leave);
+    } catch (error) {
+      console.log(error);
+      return handleInternalServerError(res);
+    }
+  },
 };
