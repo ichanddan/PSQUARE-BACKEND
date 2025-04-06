@@ -19,7 +19,10 @@ module.exports = {
   },
   GetAllAttendance: async (req, res) => {
     try {
-      const CandidateList = await Attendance.find();
+      const CandidateList = await Attendance.find().populate(
+        "employeeId",
+        "name profileUrl"
+      );;
       return handleSuccess(res, 200, "Attendance fetch successfully", CandidateList);
     } catch (error) {
       console.error("Error registering Candidate:", error);
