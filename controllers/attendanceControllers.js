@@ -21,7 +21,7 @@ module.exports = {
     try {
       const CandidateList = await Attendance.find().populate(
         "employeeId",
-        "name profileUrl"
+        "name profileUrl position department"
       );;
       return handleSuccess(res, 200, "Attendance fetch successfully", CandidateList);
     } catch (error) {

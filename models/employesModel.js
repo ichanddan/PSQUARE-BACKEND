@@ -35,10 +35,6 @@ const employeeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    attendance: {
-      type: String,
-      default:'Absent'
-    },
   },
   {
     timestamps: true,
