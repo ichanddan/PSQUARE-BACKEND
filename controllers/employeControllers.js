@@ -1,5 +1,6 @@
 const cloudinary = require("../config/cloudinary");
 const employee = require("../models/employesModel");
+const Leave = require("../models/leaveModel");
 const {
   handleError,
   handleSuccess,
@@ -61,6 +62,9 @@ module.exports = {
     try {
       const { id } = req.params;
       const data = await employee.findByIdAndDelete(id);
+      // await Leave.findOne({where:{}})
+      await Leave.deleteMany({ employeeId: id });
+
       if (!data) return handleError(res, 400, "Employee delete fail");
       return handleSuccess(res, 200, "Employee delete successfully", data);
     } catch (error) {
